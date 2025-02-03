@@ -1,6 +1,4 @@
-# Example dataset for annotation, borrowed from https://github.com/personableduck/GolfSwing/
-
-path: D:/yolo-pose-annotation/lsp-pose-small # dataset root dir
+path: C:/path/to/lsp-pose-small # dataset root dir
 train: train/images 
 val: val/images  
 test: test/images  # (optional)
