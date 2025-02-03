@@ -22,66 +22,23 @@ Make sure you have Python installed (\>=3.8). Then, install the required package
 pip install -r requirements.txt
 ```
 
-### 3. Prepare Your Dataset
-Organize your dataset in the following structure:
-```
-📂 your-dataset/
- ├── 📂 train/
- │   ├── images/
- │   │   ├── image1.jpg
- │   │   ├── image2.jpg
- │   │   └── ...
- │   └── labels/
- │       ├── image1.txt
- │       ├── image2.txt
- │       └── ...
- ├── 📂 val/
- │   ├── images/
- │   │   ├── image1.jpg
- │   │   ├── image2.jpg
- │   │   └── ...
- │   └── labels/
- │       ├── image1.txt
- │       ├── image2.txt
- │       └── ...
- ├── 📂 test/
- │   ├── images/
- │   │   ├── image1.jpg
- │   │   ├── image2.jpg
- │   │   └── ...
- │   └── labels/
- │       ├── image1.txt
- │       ├── image2.txt
- │       └── ...
-```
+### 3. Follow the Steps in the Notebook
+To use the toolset, **open and follow the steps in the Jupyter notebook**:
 
+➡️ **[YOLO Pose Annotation Pipeline Notebook](Notebooks/Tutorial.ipynb)**
 
-**UPDATE:**
-
-
-Each `.txt` file should follow the YOLO pose annotation format (normalised coordinates):
-```
-<class_id> <bbox_x> <bbox_y> <bbox_w> <bbox_h> <kp1_x> <kp1_y> <visibility> ...
-```
-
-### 4. Run Automatic Annotation
-To generate automatic annotations, run:
-```bash
-python automatic_annotator.py --image_folder path/to/images --output_folder path/to/labels
-```
-
-### 5. Run Semi-Automatic Annotation
-To review and refine annotations interactively:
-```bash
-python semi_auto_annotator.py --image_folder path/to/images --label_folder path/to/labels
-```
-
-### 6. Fine-Tune YOLO Pose Model
-To train a YOLO pose model with the annotated dataset:
-```bash
-python train.py --data custom_data.yaml --epochs 50 --weights yolov8s-pose.pt
-```
+This notebook provides a complete step-by-step guide on:
+- Downloading and preparing the dataset
+- Running automatic and semi-automatic annotation
+- Fine-tuning YOLO pose models
+- Running inference and visualizing results
 
 
 ## Contributing
 Feel free to submit pull requests or open issues for improvements and bug fixes!
+
+
+## Acknowledgements
+- This project is built using **[YOLOv8](https://github.com/ultralytics/ultralytics)** by Ultralytics.
+- **[Supervision](https://github.com/roboflow/supervision)** is used for keypoint visualisation.
+- Special thanks to **[Roboflow](https://roboflow.com/)** for their contributions to computer vision tools.
