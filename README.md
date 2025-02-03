@@ -50,3 +50,4 @@ A few ideas:
 ## Acknowledgements
 - This project is built using **[YOLOv8](https://github.com/ultralytics/ultralytics)** by Ultralytics.
 - **[Supervision](https://github.com/roboflow/supervision)** is used for keypoint visualisation.
+- **[Tkinter](https://docs.python.org/3/library/tkinter.html)**: Provides the graphical user interface (GUI) for the semi-automatic annotation tool.
