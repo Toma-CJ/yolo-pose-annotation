@@ -43,4 +43,3 @@ Feel free to submit pull requests or open issues for improvements and bug fixes!
 ## Acknowledgements
 - This project is built using **[YOLOv8](https://github.com/ultralytics/ultralytics)** by Ultralytics.
 - **[Supervision](https://github.com/roboflow/supervision)** is used for keypoint visualisation.
-- Special thanks to **[Roboflow](https://roboflow.com/)** for their contributions to computer vision tools.
