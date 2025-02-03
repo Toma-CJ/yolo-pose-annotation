@@ -12,19 +12,19 @@ This repository provides a toolset for **automatic** and **semi-automatic** pose
 
 ## Getting started
 
-### 1. Clone the Repository
+### 1. Clone the repository
 ```bash
 git clone https://github.com/kevgildea/yolo-pose-annotation.git
 cd yolo-pose-annotation
 ```
 
-### 2. Install Dependencies
+### 2. Install dependencies
 Make sure you have Python installed (\>=3.8). Then, install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Follow the Steps in the Notebook
+### 3. Follow the steps in the notebook
 To use the toolset, **open and follow the steps in the Jupyter notebook**:
 
 ➡️ **[YOLO Pose Annotation Pipeline Notebook](Notebooks/Tutorial.ipynb)**
