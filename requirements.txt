@@ -1,0 +1,8 @@
+torch
+ultralytics
+supervision
+pillow
+numpy
+tqdm
+matplotlib
+requests
