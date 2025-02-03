@@ -1,4 +1,4 @@
-# YOLO Pose Annotation Toolset
+# YOLO pose annotation pipeline
 
 ## Overview
 This repository provides a toolset for **automatic** and **semi-automatic** pose annotation to fine-tune **YOLO pose models** with custom datasets. The tool allows users to generate annotations efficiently and refine them as needed before training a fine-tuned YOLO pose model.
