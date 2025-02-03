@@ -1,0 +1,14 @@
+# Example dataset for annotation, borrowed from https://github.com/personableduck/GolfSwing/
+
+path: D:/yolo-pose-annotation/lsp-pose-small # dataset root dir
+train: train/images 
+val: val/images  
+test: test/images  # (optional)
+
+# Keypoints
+kpt_shape: [17, 3] # number of keypoints, number of dims (2 for x,y or 3 for x,y,visible)
+flip_idx: [0, 2, 1, 4, 3, 6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15]
+
+# Classes
+names:
+  0: person
