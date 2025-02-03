@@ -1,0 +1,11 @@
+path: D:/yolo-pose-annotation/your-dataset  # Path to dataset root
+train: train/images  # Path to training images
+val: val/images  # Path to validation images
+test: test/images  # Path to test images (optional but recommended)
+
+# Number of keypoints and skeleton structure
+kpt_shape: [17, 3]  # 17 keypoints, 3 values (x, y, visibility)
+
+# Class definitions (For pose estimation, typically only one class: "person")
+names:
+  0: person
