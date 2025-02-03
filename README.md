@@ -33,7 +33,7 @@ This notebook provides a complete step-by-step guide on:
 - Downloading and preparing the dataset
 - Running automatic and semi-automatic annotation
 - Fine-tuning YOLO pose models
-- Running inference and visualizing results
+- Running inference and visualising results
 
 
 ## Contributing
