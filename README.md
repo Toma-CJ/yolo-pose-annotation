@@ -37,7 +37,14 @@ This notebook provides a complete step-by-step guide on:
 
 
 ## Contributing
-Feel free to submit pull requests or open issues for improvements and bug fixes!
+Feel free to submit pull requests or open issues for improvements or bug fixes!
+
+A few ideas:
+- [ ] Add zooming and panning for small/large images.
+- [ ] Enable fully manual annotation mode (draw a bounding box with a stock set of repositionable keypoints inside).
+- [ ] Repositioning and resizing bounding boxes.
+- [ ] Add undo/redo functionality.
+- [ ] Export annotations in multiple formats, e.g., COCO.
 
 
 ## Acknowledgements
