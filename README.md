@@ -4,6 +4,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/KevGildea/yolo-pose-annotation)
 ![GitHub issues](https://img.shields.io/github/issues/KevGildea/yolo-pose-annotation)
 ![GitHub license](https://img.shields.io/github/license/KevGildea/yolo-pose-annotation)
+![GitHub stars](https://img.shields.io/github/stars/KevGildea/yolo-pose-annotation?style=social)
 
 ![Masthead](assets/masthead.png)
 
