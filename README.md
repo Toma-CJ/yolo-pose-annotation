@@ -39,7 +39,7 @@ To use the toolset, **open and follow the steps in the Jupyter notebook**:
 This notebook provides a complete step-by-step guide on:
 - Preparing the dataset (two example datasets are provided in the [datasets](datasets) folder)
 - Running automatic and semi-automatic annotation
-- Fine-tuning a YOLO pose model (Yolov8s)
+- Fine-tuning a YOLO pose model (YOLOv8s)
 - Visualising results
 
 
