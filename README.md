@@ -52,6 +52,7 @@ A few ideas:
 - [ ] Repositioning and resizing bounding boxes.
 - [ ] Add undo/redo functionality.
 - [ ] Export annotations in multiple formats, e.g., COCO.
+- [ ] Add better handling of keypoint visibility labels.
 
 
 ## Acknowledgements
