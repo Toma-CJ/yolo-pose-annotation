@@ -4,9 +4,6 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/KevGildea/yolo-pose-annotation)
 ![GitHub issues](https://img.shields.io/github/issues/KevGildea/yolo-pose-annotation)
 ![GitHub license](https://img.shields.io/github/license/KevGildea/yolo-pose-annotation)
-![Python version](https://img.shields.io/badge/python-3.8%2B-blue)
-![Ultralytics YOLOv8](https://img.shields.io/badge/YOLOv8-Pose-orange)
-![Roboflow Supervision](https://img.shields.io/badge/Supervision-Keypoints-green)
 
 ![Masthead](assets/masthead.png)
 
