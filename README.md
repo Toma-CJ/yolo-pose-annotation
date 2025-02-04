@@ -15,7 +15,7 @@ This repository provides a toolset for **automatic** and **semi-automatic** pose
 - **Semi-automatic annotation** (can be used independently): Provides an interactive tool where automatic pose estimation is applied to a single image at a time. The user can then manually correct keypoints by clicking and dragging.
 - **Fine-tuning pipeline**: Facilitates the fine-tuning of YOLO pose models with custom datasets.
 
-![GUI of semi-automatic annotation tool](assets/gui.gif)
+![GUI of semi-automatic annotation tool](assets/SA_gui.gif)
 
 ## Getting started
 
