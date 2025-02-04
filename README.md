@@ -37,7 +37,7 @@ To use the toolset, **open and follow the steps in the Jupyter notebook**:
 ➡️ **[YOLO Pose Annotation Pipeline Notebook](Notebooks/Tutorial.ipynb)**
 
 This notebook provides a complete step-by-step guide on:
-- Downloading and preparing the dataset
+- Preparing the dataset (two example datasets are provided in the [datasets](datasets) folder
 - Running automatic and semi-automatic annotation
 - Fine-tuning YOLO pose models
 - Running inference and visualising results
