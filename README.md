@@ -53,6 +53,7 @@ A few ideas:
 - [ ] Add undo/redo functionality.
 - [ ] Export annotations in multiple formats, e.g., COCO.
 - [ ] Add better handling of keypoint visibility labels.
+- [ ] Try replacing YOLOv8x-pose with a higher performing model, e.g., [ViTPose](https://github.com/ViTAE-Transformer/ViTPose).
 
 
 ## Acknowledgements
