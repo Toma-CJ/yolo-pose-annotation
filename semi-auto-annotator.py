@@ -82,6 +82,12 @@ class ImageAnnotator:
         self.next_button = tk.Button(nav_frame, text="Next", command=self.next_image, state=tk.DISABLED)
         self.next_button.pack(side=tk.LEFT, padx=5)
 
+        self.selected_bbox = None
+        self.bbox_mode = None  # "move" or "resize"
+        self.bbox_resize_corner = None  # Stores which corner is being resized
+        self.resize_margin = 10  # Margin to detect corner click
+
+
     def load_folder(self):
         """ Selects a folder of images and loads them one by one """
         folder_selected = filedialog.askdirectory()
@@ -117,15 +123,7 @@ class ImageAnnotator:
         results = self.pose_estimator(self.file_path)[0]
 
         if results.boxes and results.keypoints.xy.numel() > 0:
-            detections = sv.Detections(
-                xyxy=results.boxes.xyxy.cpu().numpy(),
-                class_id=np.arange(len(results.boxes.xyxy))  # Unique ID per person
-            )
-
-            # Draw bounding boxes using Supervision
-            annotator = sv.BoxAnnotator()
-            image_np = annotator.annotate(scene=image_np, detections=detections)
-
+            
             # Convert back to PIL for Tkinter
             self.image = Image.fromarray(image_np)
             self.tk_image = ImageTk.PhotoImage(self.image)
@@ -141,6 +139,12 @@ class ImageAnnotator:
                     label = self.canvas.create_text(x+15, y, text=f"{name} (P{person_idx})", anchor='w', font=("Arial", 8), fill='red')
                     person_keypoints.append((x, y, oval, label))
                 self.auto_keypoints.append(person_keypoints)
+            self.auto_bboxes = []  # Stores bounding boxes for detected people
+            for person_idx, (xyxy, keypoints) in enumerate(zip(results.boxes.xyxy.cpu().numpy(), results.keypoints.xy)):
+                x_min, y_min, x_max, y_max = map(int, xyxy)  # Convert to int
+                bbox_id = self.canvas.create_rectangle(x_min, y_min, x_max, y_max, outline="blue", width=2)
+                self.auto_bboxes.append((x_min, y_min, x_max, y_max, bbox_id))
+
 
         # Update navigation button states
         self.prev_button.config(state=tk.NORMAL if self.current_index > 0 else tk.DISABLED)
@@ -224,11 +228,54 @@ class ImageAnnotator:
         self.canvas.scan_dragto(event.x, event.y, gain=1)
 
     def check_click(self, event):
-        """ Detects if a keypoint was clicked for dragging """
+        """Detects if a keypoint or bounding box was clicked for dragging or resizing."""
         self.selected_keypoint = None
+        self.selected_bbox = None
+        self.bbox_mode = None
+        self.bbox_resize_corner = None
         canvas_x = self.canvas.canvasx(event.x)
         canvas_y = self.canvas.canvasy(event.y)
 
+        # Check bounding boxes
+        for i, (x_min, y_min, x_max, y_max, bbox_id) in enumerate(self.auto_bboxes):
+            width = x_max - x_min
+            height = y_max - y_min
+
+            # Define edge thickness for selection
+            edge_margin = max(5, int(min(width, height) * 0.05))  # Dynamically adjust
+
+            # Detect corner clicks for resizing
+            if abs(canvas_x - x_min) < edge_margin and abs(canvas_y - y_min) < edge_margin:
+                self.selected_bbox = (self.auto_bboxes, i, bbox_id)
+                self.bbox_mode = "resize"
+                self.bbox_resize_corner = "top_left"
+                return
+            elif abs(canvas_x - x_max) < edge_margin and abs(canvas_y - y_min) < edge_margin:
+                self.selected_bbox = (self.auto_bboxes, i, bbox_id)
+                self.bbox_mode = "resize"
+                self.bbox_resize_corner = "top_right"
+                return
+            elif abs(canvas_x - x_min) < edge_margin and abs(canvas_y - y_max) < edge_margin:
+                self.selected_bbox = (self.auto_bboxes, i, bbox_id)
+                self.bbox_mode = "resize"
+                self.bbox_resize_corner = "bottom_left"
+                return
+            elif abs(canvas_x - x_max) < edge_margin and abs(canvas_y - y_max) < edge_margin:
+                self.selected_bbox = (self.auto_bboxes, i, bbox_id)
+                self.bbox_mode = "resize"
+                self.bbox_resize_corner = "bottom_right"
+                return
+
+            # Detect clicks on edges (for moving)
+            elif (
+                (abs(canvas_x - x_min) < edge_margin or abs(canvas_x - x_max) < edge_margin) or
+                (abs(canvas_y - y_min) < edge_margin or abs(canvas_y - y_max) < edge_margin)
+            ):
+                self.selected_bbox = (self.auto_bboxes, i, bbox_id, (canvas_x, canvas_y))
+                self.bbox_mode = "move"
+                return
+
+        # Check if clicking a keypoint (if no bounding box is selected)
         for person_keypoints in self.auto_keypoints:
             for i, (x, y, oval, label) in enumerate(person_keypoints):
                 if abs(canvas_x - x) < 10 and abs(canvas_y - y) < 10:
@@ -236,18 +283,64 @@ class ImageAnnotator:
                     return
 
     def on_drag(self, event):
-        """ Moves selected keypoint while dragging """
-        if self.selected_keypoint:
+        """Moves or resizes a bounding box or moves a keypoint while dragging."""
+        canvas_x = self.canvas.canvasx(event.x)
+        canvas_y = self.canvas.canvasy(event.y)
+
+        # Resize bounding box
+        if self.selected_bbox and self.bbox_mode == "resize":
+            bbox_list, index, bbox_id = self.selected_bbox
+            x_min, y_min, x_max, y_max, _ = bbox_list[index]
+
+            # Adjust the correct corner
+            if self.bbox_resize_corner == "top_left":
+                x_min, y_min = canvas_x, canvas_y
+            elif self.bbox_resize_corner == "top_right":
+                x_max, y_min = canvas_x, canvas_y
+            elif self.bbox_resize_corner == "bottom_left":
+                x_min, y_max = canvas_x, canvas_y
+            elif self.bbox_resize_corner == "bottom_right":
+                x_max, y_max = canvas_x, canvas_y
+
+            # Update bounding box on canvas
+            self.canvas.coords(bbox_id, x_min, y_min, x_max, y_max)
+
+            # Update stored coordinates
+            bbox_list[index] = (x_min, y_min, x_max, y_max, bbox_id)
+
+        # Move bounding box (only if clicked on edge)
+        elif self.selected_bbox and self.bbox_mode == "move":
+            bbox_list, index, bbox_id, (prev_x, prev_y) = self.selected_bbox
+            dx = canvas_x - prev_x
+            dy = canvas_y - prev_y
+            x_min, y_min, x_max, y_max, _ = bbox_list[index]
+
+            # Move the box
+            new_x_min = x_min + dx
+            new_y_min = y_min + dy
+            new_x_max = x_max + dx
+            new_y_max = y_max + dy
+
+            # Update bounding box position on canvas
+            self.canvas.coords(bbox_id, new_x_min, new_y_min, new_x_max, new_y_max)
+
+            # Update stored coordinates
+            bbox_list[index] = (new_x_min, new_y_min, new_x_max, new_y_max, bbox_id)
+            self.selected_bbox = (bbox_list, index, bbox_id, (canvas_x, canvas_y))
+
+        # Move keypoint (this part remains the same)
+        elif self.selected_keypoint:
             person_keypoints, index, oval, label = self.selected_keypoint
-            canvas_x = self.canvas.canvasx(event.x)
-            canvas_y = self.canvas.canvasy(event.y)
             self.canvas.coords(oval, canvas_x-2, canvas_y-2, canvas_x+2, canvas_y+2)
             self.canvas.coords(label, canvas_x + 15, canvas_y)
             person_keypoints[index] = (canvas_x, canvas_y, oval, label)
 
     def on_release(self, event):
-        """ Stops dragging keypoint """
+        """Stops dragging and saves new bounding box coordinates."""
         self.selected_keypoint = None
+        self.selected_bbox = None
+        self.bbox_mode = None
+        self.bbox_resize_corner = None
 
     def save_annotated_image(self):
         """Saves the annotated image with optimized keypoints & skeleton visualization using Supervision."""
@@ -261,6 +354,21 @@ class ImageAnnotator:
         # Compute optimal thickness dynamically
         optimal_thickness = calculate_optimal_line_thickness(image_np.shape[:2])  # Uses image height & width
         optimal_radius = int(optimal_thickness * 1.5)  # Slightly scale the radius
+
+        # Convert manually adjusted bounding boxes to a numpy array
+        adjusted_bboxes = np.array([
+            [x_min, y_min, x_max, y_max] for x_min, y_min, x_max, y_max, _ in self.auto_bboxes
+        ])
+
+        # Create Supervision detections object for updated bounding boxes
+        detections = sv.Detections(
+            xyxy=adjusted_bboxes,
+            class_id=np.arange(len(adjusted_bboxes))  # Assign unique IDs to each box
+        )
+
+        # Draw bounding boxes using Supervision
+        annotator = sv.BoxAnnotator()
+        image_np = annotator.annotate(scene=image_np, detections=detections)
 
         # Extract keypoints properly as a NumPy array
         keypoints_list = []
@@ -284,8 +392,8 @@ class ImageAnnotator:
         edge_annotator = sv.EdgeAnnotator(thickness=optimal_thickness, edges=skeleton_edges, color=sv.Color.BLUE)
 
         # Apply keypoint and skeleton visualization
-        image_np = vertex_annotator.annotate(scene=image_np, key_points=keypoints)
         image_np = edge_annotator.annotate(scene=image_np, key_points=keypoints)
+        image_np = vertex_annotator.annotate(scene=image_np, key_points=keypoints)
 
         # Convert back to PIL image
         annotated_image = Image.fromarray(image_np)
