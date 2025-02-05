@@ -50,6 +50,7 @@ Feel free to submit pull requests or open issues for improvements or bug fixes!
 A few ideas:
 - [ ] Add zooming and panning for small/large images.
 - [ ] Enable fully manual annotation mode (draw a bounding box with a stock set of repositionable keypoints inside).
+- [ ] Functionality to delete a detected bounding box entirely.
 - [ ] Repositioning and resizing bounding boxes.
 - [ ] Add undo/redo functionality.
 - [ ] Export annotations in multiple formats, e.g., COCO.
