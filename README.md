@@ -51,7 +51,7 @@ A few ideas:
 - [ ] Add zooming and panning for small/large images.
 - [ ] Enable fully manual annotation mode (draw a bounding box with a stock set of repositionable keypoints inside).
 - [ ] Functionality to delete a detected bounding box entirely.
-- [ ] Repositioning and resizing bounding boxes.
+- [x] Repositioning and resizing bounding boxes.
 - [ ] Add undo/redo functionality.
 - [ ] Export annotations in multiple formats, e.g., COCO.
 - [ ] Add better handling of keypoint visibility labels, since currently the default is either vis=2, or vis=0 (see [documentation](resources/YOLO_annotation_format.md) for details).
