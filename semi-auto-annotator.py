@@ -122,29 +122,35 @@ class ImageAnnotator:
         # Run YOLO pose detection
         results = self.pose_estimator(self.file_path)[0]
 
-        if results.boxes and results.keypoints.xy.numel() > 0:
-            
-            # Convert back to PIL for Tkinter
+        # Convert results to Supervision's Detections format
+        detections = sv.Detections.from_ultralytics(results)
+
+        # Extract keypoints manually since it seems that a new dataset format needs to be developed to load keypoints https://github.com/roboflow/supervision/issues/1438
+        keypoints_data = results.keypoints.xy.cpu().numpy() if results.keypoints is not None else None
+
+        if len(detections.xyxy) > 0:
+            # Convert back to PIL for Tkinter (canvas widget requires a Tk-compatible image format, which PIL.ImageTk.PhotoImage provides)
             self.image = Image.fromarray(image_np)
             self.tk_image = ImageTk.PhotoImage(self.image)
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.tk_image)
 
-            # Process keypoints for each detected person
-            self.auto_keypoints = []
-            for person_idx, keypoints in enumerate(results.keypoints.xy):
-                person_keypoints = []
-                for xy, name in zip(keypoints, self.keypoints_order):
-                    x, y = int(xy[0].item()), int(xy[1].item())
-                    oval = self.canvas.create_oval(x-2, y-2, x+2, y+2, fill='green')
-                    label = self.canvas.create_text(x+15, y, text=f"{name} (P{person_idx})", anchor='w', font=("Arial", 8), fill='red')
-                    person_keypoints.append((x, y, oval, label))
-                self.auto_keypoints.append(person_keypoints)
-            self.auto_bboxes = []  # Stores bounding boxes for detected people
-            for person_idx, (xyxy, keypoints) in enumerate(zip(results.boxes.xyxy.cpu().numpy(), results.keypoints.xy)):
-                x_min, y_min, x_max, y_max = map(int, xyxy)  # Convert to int
+            # Store bounding boxes
+            self.auto_bboxes = []
+            for i, (x_min, y_min, x_max, y_max) in enumerate(detections.xyxy):
                 bbox_id = self.canvas.create_rectangle(x_min, y_min, x_max, y_max, outline="blue", width=2)
                 self.auto_bboxes.append((x_min, y_min, x_max, y_max, bbox_id))
 
+            # Process keypoints
+            self.auto_keypoints = []
+            if keypoints_data is not None:
+                for person_idx, keypoints in enumerate(keypoints_data):
+                    person_keypoints = []
+                    for xy, name in zip(keypoints, self.keypoints_order):
+                        x, y = int(xy[0]), int(xy[1])
+                        oval = self.canvas.create_oval(x-2, y-2, x+2, y+2, fill='green')
+                        label = self.canvas.create_text(x+15, y, text=f"{name} (P{person_idx})", anchor='w', font=("Arial", 8), fill='red')
+                        person_keypoints.append((x, y, oval, label))
+                    self.auto_keypoints.append(person_keypoints)
 
         # Update navigation button states
         self.prev_button.config(state=tk.NORMAL if self.current_index > 0 else tk.DISABLED)
@@ -387,7 +393,7 @@ class ImageAnnotator:
         # Automatically determine the correct skeleton structure
         skeleton_edges = SKELETONS_BY_VERTEX_COUNT.get(len(keypoints.xy[0]), None)
 
-        # Create annotators using **dynamic thickness & radius**
+        # Create annotators using dynamic thickness & radius
         vertex_annotator = sv.VertexAnnotator(radius=optimal_radius, color=sv.Color.RED)
         edge_annotator = sv.EdgeAnnotator(thickness=optimal_thickness, edges=skeleton_edges, color=sv.Color.BLUE)
 
