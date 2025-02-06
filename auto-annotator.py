@@ -28,7 +28,8 @@ def process_image(image_path, labels_folder, annotated_folder):
 
     # Convert results to numpy arrays
     keypoints_np = results.keypoints.xy.cpu().numpy()
-    bounding_boxes = results.boxes.xyxy.cpu().numpy() if results.boxes else []
+    # bounding_boxes = results.boxes.xyxy.cpu().numpy() if results.boxes else []
+    detections = sv.Detections.from_ultralytics(results)
 
     # Compute optimal thickness dynamically
     optimal_thickness = calculate_optimal_line_thickness(img_np.shape[:2])  # Uses image height & width
@@ -57,16 +58,16 @@ def process_image(image_path, labels_folder, annotated_folder):
     edge_annotator = sv.EdgeAnnotator(thickness=optimal_thickness, edges=skeleton_edges, color=sv.Color.BLUE)
 
     # Prepare bounding box detections for supervision
-    detections = sv.Detections(
-                xyxy=results.boxes.xyxy.cpu().numpy(),
-                class_id=np.arange(len(results.boxes.xyxy))  # Unique ID per person
-            )
+    # detections = sv.Detections(
+    #             xyxy=results.boxes.xyxy.cpu().numpy(),
+    #             class_id=np.arange(len(results.boxes.xyxy))  # Unique ID per person
+    #         )
 
     # Apply keypoint and skeleton visualization
     img_np = box_annotator.annotate(scene=img_np, detections=detections)
-    img_np = vertex_annotator.annotate(scene=img_np, key_points=keypoints_sv)
     img_np = edge_annotator.annotate(scene=img_np, key_points=keypoints_sv)
-
+    img_np = vertex_annotator.annotate(scene=img_np, key_points=keypoints_sv)
+    
     # Save annotated image
     annotated_img_path = os.path.join(annotated_folder, os.path.basename(image_path).replace(".jpg", "_annotated.png"))
     Image.fromarray(img_np).save(annotated_img_path)
