@@ -56,6 +56,7 @@ A few ideas:
 - [ ] Export annotations in multiple formats, e.g., COCO.
 - [ ] Add better handling of keypoint visibility labels, since currently the default is either vis=2, or vis=0 (see [documentation](resources/YOLO_annotation_format.md) for details).
 - [ ] Try replacing YOLOv8x-pose with a higher performing model, e.g., [ViTPose](https://github.com/ViTAE-Transformer/ViTPose).
+- [ ] Try using few-shot HPE for augmented annotation. 
 
 
 ## Acknowledgements
